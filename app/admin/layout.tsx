@@ -3,38 +3,41 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import {
+  LayoutDashboard,
+  Users,
+  Gauge,
+  Receipt,
+  BarChart3,
+  Settings,
+  Droplets,
+  Menu,
+  X,
+  Bell,
+  Search,
+  LogOut,
+  User,
+  ChevronDown, Table,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/admin", label: "Dashboard", icon: "dashboard" },
-  { href: "/admin/users", label: "Users", icon: "users" },
-  { href: "/admin/listing", label: "Listing", icon: "listing" },
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/customers", label: "Customers", icon: Users },
+  { href: "/admin/listings", label: "Listings", icon: Table },
 ];
-
-function SidebarIcon({ icon }: { icon: string }) {
-  const paths: Record<string, string> = {
-    dashboard:
-      "M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25a2.25 2.25 0 0 1-2.25-2.25v-2.25Z",
-    users:
-      "M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z",
-    listing:
-      "M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z",
-  };
-  return (
-    <svg
-      className="h-5 w-5"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d={paths[icon] || paths.dashboard}
-      />
-    </svg>
-  );
-}
 
 export default function AdminLayout({
   children,
@@ -42,32 +45,28 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-zinc-100 dark:bg-zinc-950">
-      {/* Sidebar */}
-      <aside
-        className={`${
-          sidebarOpen ? "w-64" : "w-20"
-        } hidden md:flex flex-col bg-gradient-to-b from-blue-600 to-blue-800 text-white transition-all duration-300 ease-in-out`}
-      >
+    <div className="flex h-screen overflow-hidden bg-[hsl(210,20%,98%)]">
+      {/* Desktop Sidebar */}
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-sidebar lg:flex">
         {/* Brand */}
-        <div className="flex h-16 items-center justify-center border-b border-white/10 px-4">
-          <span
-            className={`text-lg font-bold tracking-tight ${
-              sidebarOpen ? "block" : "hidden"
-            }`}
-          >
-            Water Listing
-          </span>
-          {!sidebarOpen && (
-            <span className="text-lg font-bold">WL</span>
-          )}
+        <div className="flex h-16 items-center gap-2.5 border-b border-sidebar-border px-5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-600">
+            <Droplets className="h-4.5 w-4.5 text-white" />
+          </div>
+          <div>
+            <h1 className="text-sm font-bold tracking-tight text-sidebar-foreground">
+              Lista Tubig
+            </h1>
+            <p className="text-[10px] text-sidebar-foreground/50">
+              Water Management
+            </p>
+          </div>
         </div>
 
-        {/* Nav */}
+        {/* Navigation */}
         <nav className="flex-1 space-y-1 px-3 py-4">
           {navItems.map((item) => {
             const isActive =
@@ -78,64 +77,77 @@ export default function AdminLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-white/20 text-white"
-                    : "text-white/70 hover:bg-white/10 hover:text-white"
-                } ${!sidebarOpen ? "justify-center" : ""}`}
+                    ? "bg-sky-600/10 text-sky-700"
+                    : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                )}
               >
-                <SidebarIcon icon={item.icon} />
-                {sidebarOpen && <span>{item.label}</span>}
+                <item.icon
+                  className={cn(
+                    "h-4.5 w-4.5 shrink-0",
+                    isActive ? "text-sky-600" : "text-muted-foreground"
+                  )}
+                />
+                {item.label}
               </Link>
             );
           })}
         </nav>
 
-        {/* Toggle */}
-        <div className="border-t border-white/10 p-4">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white/70 transition-colors hover:bg-white/20 hover:text-white"
-          >
-            <svg
-              className={`h-4 w-4 transition-transform ${
-                sidebarOpen ? "" : "rotate-180"
-              }`}
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 19.5 8.25 12l7.5-7.5"
-              />
-            </svg>
-          </button>
+        {/* Sidebar footer */}
+        <div className="border-t border-sidebar-border p-3">
+          <div className="flex items-center gap-3 rounded-lg px-3 py-2">
+            <Avatar className="h-8 w-8">
+              <AvatarFallback className="bg-sky-600 text-xs font-bold text-white">
+                AD
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 truncate">
+              <p className="text-sm font-medium text-sidebar-foreground">
+                Admin
+              </p>
+              <p className="text-xs text-sidebar-foreground/50">
+                administrator
+              </p>
+            </div>
+          </div>
         </div>
       </aside>
 
       {/* Mobile sidebar overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       {/* Mobile sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-600 to-blue-800 text-white transition-transform duration-300 md:hidden ${
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-border bg-sidebar transition-transform duration-200 lg:hidden",
           mobileOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        )}
       >
-        <div className="flex h-16 items-center justify-center border-b border-white/10 px-4">
-          <span className="text-lg font-bold tracking-tight">
-            Water Listing
-          </span>
+        <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-5">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-600">
+              <Droplets className="h-4.5 w-4.5 text-white" />
+            </div>
+            <h1 className="text-sm font-bold tracking-tight text-sidebar-foreground">
+              Lista Tubig
+            </h1>
+          </div>
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="rounded-md p-1 text-sidebar-foreground/60 hover:text-sidebar-foreground"
+          >
+            <X className="h-5 w-5" />
+          </button>
         </div>
-        <nav className="space-y-1 px-3 py-4">
+        <nav className="flex-1 space-y-1 px-3 py-4">
           {navItems.map((item) => {
             const isActive =
               item.href === "/admin"
@@ -146,90 +158,97 @@ export default function AdminLayout({
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-white/20 text-white"
-                    : "text-white/70 hover:bg-white/10 hover:text-white"
-                }`}
+                    ? "bg-sky-600/10 text-sky-700"
+                    : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                )}
               >
-                <SidebarIcon icon={item.icon} />
-                <span>{item.label}</span>
+                <item.icon
+                  className={cn(
+                    "h-4.5 w-4.5 shrink-0",
+                    isActive ? "text-sky-600" : "text-muted-foreground"
+                  )}
+                />
+                {item.label}
               </Link>
             );
           })}
         </nav>
       </aside>
 
-      {/* Main content */}
+      {/* Main content area */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Topbar */}
-        <header className="flex h-16 items-center justify-between border-b border-zinc-200 bg-white px-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:px-6">
-          {/* Mobile toggle */}
-          <button
+        {/* Top header */}
+        <header className="flex h-16 shrink-0 items-center gap-4 border-b border-border bg-card px-4 sm:px-6">
+          {/* Mobile menu toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="shrink-0 lg:hidden"
             onClick={() => setMobileOpen(true)}
-            className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 md:hidden dark:text-zinc-400 dark:hover:bg-zinc-800"
           >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-              />
-            </svg>
-          </button>
+            <Menu className="h-5 w-5" />
+          </Button>
 
-          <div className="hidden md:block" />
+          {/* Search */}
+          <div className="relative hidden flex-1 sm:block sm:max-w-md">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search accounts, meters..."
+              className="pl-9 bg-muted/50"
+            />
+          </div>
 
-          {/* Right side */}
-          <div className="flex items-center gap-3">
+          <div className="flex-1 lg:flex-none" />
+
+          {/* Right actions */}
+          <div className="flex items-center gap-2">
             {/* Notifications */}
-            <button className="relative rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800">
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-                />
-              </svg>
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+            <Button variant="ghost" size="icon" className="relative h-9 w-9">
+              <Bell className="h-4.5 w-4.5" />
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
                 3
               </span>
-            </button>
+            </Button>
 
-            {/* Divider */}
-            <div className="hidden h-6 w-px bg-zinc-200 dark:bg-zinc-700 sm:block" />
+            <Separator orientation="vertical" className="h-6" />
 
-            {/* User */}
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
-                A
-              </div>
-              <span className="hidden text-sm font-medium text-zinc-700 dark:text-zinc-300 sm:block">
-                Admin
-              </span>
-            </div>
+            {/* User dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="inline-flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium hover:bg-muted">
+                <Avatar className="h-7 w-7">
+                  <AvatarFallback className="bg-sky-600 text-[10px] font-bold text-white">
+                    AD
+                  </AvatarFallback>
+                </Avatar>
+                <span className="hidden text-sm font-medium md:block">
+                  Admin
+                </span>
+                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem className="gap-2">
+                  <User className="h-4 w-4" />
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem className="gap-2">
+                  <Settings className="h-4 w-4" />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="gap-2 text-destructive">
+                  <LogOut className="h-4 w-4" />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
-
-        {/* Footer */}
-        <footer className="border-t border-zinc-200 bg-white px-6 py-3 text-center text-xs text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
-          Copyright &copy; Water Listing {new Date().getFullYear()}
-        </footer>
       </div>
     </div>
   );
